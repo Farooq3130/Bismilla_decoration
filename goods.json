@@ -20,5 +20,16 @@
       "medium": 200,
       "large": 300
     }
+  },
+  {
+    "name": "test",
+    "desc": "asdf",
+    "qty": 88,
+    "image": "images/4.jpg",
+    "sizes": {
+      "small": 100,
+      "medium": 200,
+      "large": 300
+    }
   }
 ]
