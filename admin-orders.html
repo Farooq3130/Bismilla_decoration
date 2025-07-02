@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Orders - Bismillah Decoration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header><h1>All Orders - Admin Panel</h1></header>
+
+  <main>
+    <section class="booking-form">
+      <table id="ordersTable">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Client</th>
+            <th>Item</th>
+            <th>Size</th>
+            <th>Qty</th>
+            <th>Total ₹</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+  
+
+  <footer>
+    <p>Only visible to admin</p>
+  </footer>
+
+  <script>
+    // Restrict Access
+    // if (localStorage.getItem("adminLoggedIn") !== "true") {
+    //   window.location.href = "admin-login.html";
+    // }
+
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    const table = document.querySelector("#ordersTable tbody");
+
+    if (orders.length === 0) {
+      table.innerHTML = `<tr><td colspan="7">No orders found</td></tr>`;
+    } else {
+      orders.forEach((order, index) => {
+        table.innerHTML += `
+          <tr>
+            <td>${index + 1}</td>
+            <td>${order.name}</td>
+            <td>${order.itemName}</td>
+            <td>${order.size}</td>
+            <td>${order.qty}</td>
+            <td>₹${order.total}</td>
+            <td>${order.location}</td>
+          </tr>`;
+      });
+    }
+  </script>
+</body>
+</html>

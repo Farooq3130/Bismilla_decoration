@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin - Bismillah Decoration</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Admin Panel - Bismillah Decoration</h1>
+
+  <form id="addGoodForm">
+    <input type="text" id="name" placeholder="Good Name" required>
+    <input type="text" id="desc" placeholder="Short Description" required>
+    <input type="number" id="qty" placeholder="Available Quantity" required>
+    <input type="text" id="sizes" placeholder="Sizes:Price (e.g., Small:100,Medium:150)" required>
+    <input type="path" id="image" placeholder="Paste Image URL" required>
+    <button type="submit">Add Good</button>
+  </form>
+
+  <h2>Goods JSON (Copy This and Paste in goods.json)</h2>
+  <pre id="goodsJson"></pre>
+
+  <script>
+    let goods = [];
+
+    document.getElementById("addGoodForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const desc = document.getElementById("desc").value.trim();
+      const qty = parseInt(document.getElementById("qty").value.trim());
+      const image = document.getElementById("image").value.trim();
+      const sizeStr = document.getElementById("sizes").value.trim();
+
+      const sizes = {};
+      sizeStr.split(',').forEach(pair => {
+        const [size, price] = pair.split(':');
+        if (size && price) sizes[size.trim()] = parseFloat(price.trim());
+      });
+
+      const good = { name, desc, qty, image, sizes };
+      goods.push(good);
+      updatePreview();
+      document.getElementById("addGoodForm").reset();
+    });
+
+    function updatePreview() {
+      document.getElementById("goodsJson").textContent = JSON.stringify(goods, null, 2);
+    }
+  </script>
+</body>
+</html>

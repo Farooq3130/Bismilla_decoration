@@ -1,0 +1,103 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bismillah Decoration</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Bismillah Decoration - Book Your Goods</h1>
+
+  <div id="goodsContainer"></div>
+
+  <div id="productModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);padding:20px;box-sizing:border-box;overflow:auto;z-index:1000;">
+    <div style="background:#fff;color:#000;padding:20px;border-radius:8px;max-width:600px;margin:40px auto;position:relative;">
+      <button onclick="closeModal()" style="position:absolute;top:10px;right:10px;background:red;color:white;border:none;font-size:18px;border-radius:50%;width:30px;height:30px;cursor:pointer;">&times;</button>
+      <div id="modalContent"></div>
+    </div>
+  </div>
+
+  <script>
+    let goods = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('goods.json')
+        .then(response => response.json())
+        .then(data => {
+          goods = data;
+          displayGoods();
+        });
+    });
+
+    function displayGoods() {
+      const container = document.getElementById('goodsContainer');
+      container.innerHTML = '';
+      goods.forEach((good, index) => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <h3>${good.name}</h3>
+          <img src="${good.image}" alt="${good.name}" style="max-width:200px;cursor:pointer;" onclick="showDetails(${index})">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function showDetails(index) {
+      const good = goods[index];
+      const modal = document.getElementById('productModal');
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <h2>${good.name}</h2>
+        <img src="${good.image}" style="width:100%;max-width:400px;">
+        <p>${good.desc}</p>
+        <p>Available Quantity: ${good.qty}</p>
+        <p>Sizes and Prices:</p>
+        <ul>${Object.entries(good.sizes).map(([size, price]) => `<li>${size}: ₹${price}</li>`).join('')}</ul>
+        <h3>Place Order</h3>
+        <form onsubmit="submitOrder(event, ${index})">
+          <input type="text" id="clientName" placeholder="Your Name" required>
+          <input type="text" id="clientPhone" placeholder="Phone Number" required>
+          <input type="text" id="clientAddress" placeholder="Address" required>
+          <input type="text" id="orderSize" placeholder="Size (e.g., Medium)" required>
+          <input type="number" id="orderQty" placeholder="Quantity" required>
+          <button type="submit">Submit Order</button>
+        </form>
+      `;
+      modal.style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('productModal').style.display = 'none';
+    }
+
+    function submitOrder(e, index) {
+      e.preventDefault();
+      const name = document.getElementById('clientName').value;
+      const phone = document.getElementById('clientPhone').value;
+      const address = document.getElementById('clientAddress').value;
+      const size = document.getElementById('orderSize').value;
+      const qty = document.getElementById('orderQty').value;
+      const good = goods[index];
+
+      const order = {
+        name,
+        phone,
+        address,
+        good: good.name,
+        size,
+        qty,
+        date: new Date().toLocaleString()
+      };
+
+      const orders = JSON.parse(localStorage.getItem('orders')) || [];
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+
+      alert('Order placed successfully!');
+      closeModal();
+    }
+  </script>
+</body>
+</html>
